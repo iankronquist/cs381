@@ -1,3 +1,4 @@
+-- Team members Ian Kronquist kronquii
 module Nat where
 
 import Prelude hiding (Enum(..), sum)
