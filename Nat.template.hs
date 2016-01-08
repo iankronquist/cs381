@@ -41,7 +41,9 @@ four = Succ three
 --   >>> pred three
 --   Succ (Succ Zero)
 --   
-pred = undefined
+pred :: Nat -> Nat
+pred (Succ n) = n
+pred Zero = Zero
 
 
 -- | True if the given value is zero.
@@ -52,7 +54,8 @@ pred = undefined
 --   >>> isZero two
 --   False
 --
-isZero = undefined
+isZero :: Nat -> Bool
+isZero n = n == Zero
 
 
 -- | Convert a natural number to an integer.
@@ -63,7 +66,9 @@ isZero = undefined
 --   >>> toInt three
 --   3
 --
-toInt = undefined
+toInt :: Nat -> Int
+toInt (Zero) = 0
+toInt (Succ n) = 1 + (toInt $ n)
 
 
 -- | Add two natural numbers.
@@ -80,7 +85,10 @@ toInt = undefined
 --   >>> add two three == add three two
 --   True
 --   
-add = undefined
+add :: Nat -> Nat -> Nat
+add (Succ f) (Succ s) = add f (Succ $ Succ s)
+add Zero s = s
+add s Zero = s
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -98,7 +106,11 @@ add = undefined
 --   >>> sub one three
 --   Zero
 --
-sub = undefined
+sub :: Nat -> Nat -> Nat
+sub (Succ f) (Succ s) = sub f s
+sub Zero (Succ s) = Zero
+sub (Succ s) Zero = Succ s
+sub Zero Zero  = Zero
 
 
 -- | Is the left value greater than the right?
@@ -112,7 +124,11 @@ sub = undefined
 --   >>> gt two two
 --   False
 --
-gt = undefined
+gt :: Nat -> Nat -> Bool
+gt (Succ f) (Succ s) = gt f s
+gt Zero _ = False
+gt (Succ s) Zero = True
+
 
 
 -- | Multiply two natural numbers.
@@ -129,7 +145,14 @@ gt = undefined
 --   >>> toInt (mult three three)
 --   9
 --
-mult = undefined
+mult :: Nat -> Nat -> Nat
+mult Zero s = Zero
+mult f Zero = Zero
+mult f s = multHelp f Zero s
+
+multHelp :: Nat -> Nat -> Nat -> Nat
+multHelp const accu (Succ s) = add (add accu const) (multHelp const accu s)
+multHelp const accu Zero = accu
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -143,7 +166,8 @@ mult = undefined
 --   >>> toInt (sum [one,two,three])
 --   6
 --
-sum = undefined
+sum :: [Nat] -> Nat
+sum ns = foldr add Zero ns
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -154,4 +178,5 @@ sum = undefined
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
-odds = undefined
+odds :: [Nat]
+odds = [one] ++ map (add two) odds
