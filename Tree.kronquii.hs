@@ -124,7 +124,7 @@ minInt (Leaf l) = l
 --
 
 sumInts :: Tree -> Int
-sumInts (Node t l r) = t + (sumInts l) + (sumInts r)
+sumInts (Node t l r) = t + sumInts l + sumInts r
 sumInts (Leaf i) = i
 
 
@@ -143,7 +143,7 @@ sumInts (Leaf i) = i
 --   [6,2,1,4,3,5,8,7,9]
 --   
 preorder :: Tree -> [Int]
-preorder (Node t l r) = [t] ++ (preorder l) ++ (preorder r)
+preorder (Node t l r) = t : preorder l ++ preorder r
 preorder (Leaf l) = [l]
 
 
@@ -162,7 +162,7 @@ preorder (Leaf l) = [l]
 --   [1,2,3,4,5,6,7,8,9]
 --   
 inorder :: Tree -> [Int]
-inorder (Node t l r) = (inorder l) ++ [t] ++ (inorder r)
+inorder (Node t l r) = inorder l ++ [t] ++ inorder r
 inorder (Leaf l) = [l]
 
 -- | Check whether a binary tree is a binary search tree.

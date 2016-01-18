@@ -69,7 +69,7 @@ isZero n = n == Zero
 --
 toInt :: Nat -> Int
 toInt (Zero) = 0
-toInt (Succ n) = 1 + (toInt $ n)
+toInt (Succ n) = 1 + (toInt n)
 
 
 -- | Add two natural numbers.
@@ -168,7 +168,7 @@ multHelp const accu Zero = accu
 --   6
 --
 sum :: [Nat] -> Nat
-sum ns = foldr add Zero ns
+sum = foldr add Zero
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -180,4 +180,4 @@ sum ns = foldr add Zero ns
 --   10000
 --
 odds :: [Nat]
-odds = [one] ++ map (add two) odds
+odds = one : map (add two) odds
