@@ -93,15 +93,15 @@ pretty :: Prog -> String
 pretty [] = ""
 pretty (Pen Up:xs) = "pen up; " ++ pretty xs
 pretty (Pen Down:xs) = "pen up; " ++ pretty xs
-pretty ((Move (l, r)):xs) = "move (" ++ (pretty_expr l) ++ ", " ++ (pretty_expr r) ++ "); " ++ pretty xs
-pretty ((Call n vs):xs) = n ++ "(" ++ (concat $ intersperse ", " $ map pretty_expr vs) ++ "); " ++ pretty xs
-pretty ((Define m vs p):ps) = "define " ++ m ++ "(" ++ concat (intersperse ", " vs) ++ ") {" ++ pretty p ++ "}; " ++ pretty ps
+pretty (Move (l, r):xs) = "move (" ++ prettyExpr l ++ ", " ++ prettyExpr r ++ "); " ++ pretty xs
+pretty (Call n vs:xs) = n ++ "(" ++ intercalate ", " (map prettyExpr vs) ++ "); " ++ pretty xs
+pretty (Define m vs p:ps) = "define " ++ m ++ "(" ++ intercalate ", " vs ++ ") {" ++ pretty p ++ "}; " ++ pretty ps
 
 -- A helper function for pretty which pretty prints expressions
-pretty_expr :: Expr -> String
-pretty_expr (Number n) = show n
-pretty_expr (Ref s) = s
-pretty_expr (Add l r) = (pretty_expr l) ++ " + " ++ (pretty_expr r)
+prettyExpr :: Expr -> String
+prettyExpr (Number n) = show n
+prettyExpr (Ref s) = s
+prettyExpr (Add l r) = prettyExpr l ++ " + " ++ prettyExpr r
 
 -- | 7 Define a Haskell function optE :: Expr -> Expr that partially evaluates
 -- | expressions by replacing any additions of literals with the result. For
@@ -123,7 +123,7 @@ optE otherwise = otherwise
 optP :: Prog -> Prog
 optP [] = []
 optP (p:ps) = case p of
-  Move (l, r) -> (Move (optE l, optE r)):optP ps
-  Call m es -> (Call m (map optE es)):optP ps
-  Define m vs p -> (Define m vs (optP p)):optP ps
+  Move (l, r) -> Move (optE l, optE r):optP ps
+  Call m es -> Call m (map optE es):optP ps
+  Define m vs p -> Define m vs (optP p):optP ps
   otherwise -> p:optP ps
