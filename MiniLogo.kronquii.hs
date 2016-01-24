@@ -1,4 +1,7 @@
 module MiniLogo where
+
+-- Ian Kronquist
+-- kronquii
 import Data.List
 
 type Macro = String
