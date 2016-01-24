@@ -1,3 +1,4 @@
+module MiniLogo where
 import Data.List
 
 type Macro = String
@@ -88,8 +89,6 @@ macros (p:ps) = case p of
 -- above; however, for simplicity you will probably want to print just one
 -- command per line.
 
-In GHCi, you can render a string with newlines by applying the function putStrLn. So, to pretty-print a program p use: putStrLn (pretty p).
-
 pretty :: Prog -> String
 pretty [] = ""
 pretty (Pen Up:xs) = "pen up; " ++ pretty xs
@@ -104,7 +103,27 @@ pretty_expr (Number n) = show n
 pretty_expr (Ref s) = s
 pretty_expr (Add l r) = (pretty_expr l) ++ " + " ++ (pretty_expr r)
 
--- 7 Define a Haskell function optE :: Expr -> Expr that partially evaluates
--- expressions by replacing any additions of literals with the result. For
--- example, given the expression (2+3)+x, optE should return the expression
--- 5+x.
+-- | 7 Define a Haskell function optE :: Expr -> Expr that partially evaluates
+-- | expressions by replacing any additions of literals with the result. For
+-- | example, given the expression (2+3)+x, optE should return the expression
+-- | 5+x.
+--   >>> optE (Add (Number 1) (Number 2))
+--   Number 3
+--   >>> optE (Add (Number 2) (Add (Ref "a") (Number 2)))
+--   Add (Number 2) (Add (Ref "a") (Number 2))
+optE :: Expr -> Expr
+optE (Add (Number l) (Number r)) = Number $ l + r
+optE otherwise = otherwise
+
+-- | 8 Define a Haskell function optP :: Prog -> Prog that optimizes all of the
+-- | expressions contained in a given program using optE.
+--   >>> let a = Define "nix" ["x", "y", "w", "h"] [Call "line" [Ref "x", Ref "y", Add (Ref "x") (Ref "w"), Add (Number 1) (Ref "h")],Call "line" [Add (Ref "x") (Ref "w"), Ref "y", Ref "x", Add (Number 2) (Number 1)]]
+--   >>> optP [a]
+--   [Define "nix" ["x","y","w","h"] [Call "line" [Ref "x",Ref "y",Add (Ref "x") (Ref "w"),Add (Number 1) (Ref "h")],Call "line" [Add (Ref "x") (Ref "w"),Ref "y",Ref "x",Number 3]]]
+optP :: Prog -> Prog
+optP [] = []
+optP (p:ps) = case p of
+  Move (l, r) -> (Move (optE l, optE r)):optP ps
+  Call m es -> (Call m (map optE es)):optP ps
+  Define m vs p -> (Define m vs (optP p)):optP ps
+  otherwise -> p:optP ps
