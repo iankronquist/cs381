@@ -31,7 +31,7 @@ stmt PutBeeper _ w r = let p = getPos r
                               then OK (incBeeper p w) (decBag r)
                               else Error "No beeper to put."
 stmt (Turn d) _ w (p, c, i) = OK w $ setFacing (cardTurn d c) (p, c,i)
-stmt (Call m) d w r = case (lookup m d) of
+stmt (Call m) d w r = case lookup m d of
                         Nothing -> Error ("Undefined macro: " ++ m)
                         Just s  -> stmt s d w r
 stmt (Iterate 0 _) _ w r = OK w r
@@ -51,4 +51,4 @@ stmt (While t s) d w r = if test t w r then case stmt s d w r of
     
 -- | Run a Karel program.
 prog :: Prog -> World -> Robot -> Result
-prog (m,s) w r = stmt s m w r
+prog (m,s) = stmt s m
