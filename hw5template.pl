@@ -64,7 +64,7 @@ grandparent(X,Z) :- parent(X,Y),parent(Y,Z).
 
 
 % 4. Define a predicate `sibling/2`. Siblings share at least one parent.
-sibling(X,Y) :- parent(S,X), parent(S,Y).
+sibling(X,Y) :- parent(S,X), parent(S,Y), X \= Y.
 
 
 % 5. Define two predicates `brother/2` and `sister/2`.
@@ -80,7 +80,9 @@ siblingInLaw(X,Y) :- sibling(Y,Z), married(X,Z).
 % 7. Define two predicates `aunt/2` and `uncle/2`. Your definitions of these
 %    predicates should include aunts and uncles by marriage.
 aunt(X,Y) :- female(X), sibling(X,Z), parent(Z,Y).
+aunt(X,Y) :- female(X), married(X,Z), sibling(Z,A), parent(A,Y).
 uncle(X,Y) :- male(X), sibling(X,Z), parent(Z,Y).
+uncle(X,Y) :- male(X), married(X,Z), sibling(Z,A), parent(A,Y).
 
 
 % 8. Define the predicate `cousin/2`.
