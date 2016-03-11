@@ -110,4 +110,11 @@ related(X,Y) :- sibling(X,Y).
 %%
 % Part 2. Language implementation (see course web page)
 %%
+cmd(add,[F,S|T],S2) :- X is (F+S), S2 = [X|T].
+cmd(lte,[F,S|T], S2) :- X = (F =< S ->Y=t;Y=f), call(X), S2 = [Y|T].
+cmd(if(R,_),[t|T], S2) :- prog(R,T,S2).
+cmd(if(_,W),[f|T], S2) :- prog(W,T,S2).
+cmd(X,T,S2) :- S2 = [X|T].
 
+prog([], S1, S2) :- S2 = S1.
+prog([C|T], S1, S2) :- cmd(C, S1, S3), prog(T,S3,S2).
