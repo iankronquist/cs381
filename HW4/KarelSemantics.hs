@@ -1,4 +1,5 @@
 module KarelSemantics where
+-- Ian Kronquist -- kronquii
 
 import Prelude hiding (Either(..))
 import Data.Function (fix)
